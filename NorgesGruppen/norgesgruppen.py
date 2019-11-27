@@ -1,7 +1,8 @@
-import requests, json
+import json
+import requests
 
-class NorgesGruppen:
 
+class NorgesGruppen():
     """
         This is an unofficial wrapper for NorgesGruppens' (unintentionally?) public API.
         There are multiple stores using this API and therefore it requires a store id.
@@ -71,6 +72,7 @@ class NorgesGruppen:
     """
         Every request to the API needs a x-csrf-token, which is just a value of a cookie so its easy to fetch.
     """
+
     def refresh_token(self):
         self.session.get(self.id_dict_url[self.store_id])
         self.token = self.session.cookies.get_dict()["_app_token_"]
