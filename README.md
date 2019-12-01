@@ -36,5 +36,4 @@ Every getter will default to index 0 in the search results, but it can be user-d
 
 See examples.py for more examples. Its pretty self-explanatory.
 
-## TODO
-Create classes for recipes, stores and articles.
+
