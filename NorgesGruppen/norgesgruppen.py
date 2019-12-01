@@ -15,7 +15,6 @@ import requests
 
 
 class Store:
-
     id_dict_url = {
         1210: "https://spar.no/",
         1220: "https://joker.no/",
@@ -28,9 +27,13 @@ class Store:
         1300: "7080000886050"
     }
 
-    def __init__(self, store_id=1210):
+    def __init__(self, store_id=1210, param_page_size='14', param_types=None):
+        if param_types is None:
+            param_types = 'suggest,products,articles,recipes,stores'
         if store_id in self.id_dict_url:
             self.store_id = store_id
+            self.param_page_size = param_page_size
+            self.param_types = param_types
             self.rest_url = "https://platform-rest-prod.ngdata.no/api/episearch/{}/autosuggest".format(self.store_id)
             self.session = requests.Session()
             self.token = None
@@ -80,18 +83,22 @@ class Store:
 
     def set_params(self, search):
         self.params = (
-            ('types', 'suggest,products,articles,recipes,stores'),
+            ('types', self.param_types),
             ('search', search),
-            ('page_size', '14'),
+            ('page_size', self.param_page_size),
             ('store_id', self.id_dict_param_id[self.store_id]),
             ('popularity', 'true'),
         )
+
+    def set_param_types(self, params):
+        self.param_types = params
 
 
 class Product:
 
     def __init__(self, store, search):
         self.store = store
+        self.store.set_param_types('products')
         self.search = search
         self.json = self.store.fetch_products(search)
 
@@ -165,4 +172,103 @@ class Product:
         return self.fetch_products_hits()[index]["contentData"]
 
     def fetch_products_hits(self):
+        return self.json["hits"]
+
+
+class Recipe:
+
+    def __init__(self, store, search):
+        self.store = store
+        self.store.set_param_types('recipes')
+        self.search = search
+        self.json = self.store.fetch_recipes(search)
+
+    def get_content_type(self, index=0):
+        return self.fetch_recipes_hits()[index]["contentType"]
+
+    def get_title(self, index=0):
+        return self.fetch_recipes_hits()[index]["title"]
+
+    def get_description(self, index=0):
+        return self.fetch_recipes_hits()[index]["description"]
+
+    def get_content_id(self, index=0):
+        return self.fetch_recipes_hits()[index]["contentId"]
+
+    def get_image(self, index=0):
+        return self.fetch_recipes_hits()[index]["image"]
+
+    def get_image_id(self, index=0):
+        return self.fetch_recipes_hits()[index]["imageId"]
+
+    def get_url(self, index=0):
+        return self.fetch_recipes_hits()[index]["url"]
+
+    def fetch_recipes_hits(self, index=0):
+        return self.json["hits"]
+
+
+class Article:
+
+    def __init__(self, store, search):
+        self.store = store
+        self.store.set_param_types('articles')
+        self.search = search
+        self.json = self.store.fetch_articles(search)
+
+    def get_content_type(self, index=0):
+        return self.fetch_articles_hits()[index]["contentType"]
+
+    def get_title(self, index=0):
+        return self.fetch_articles_hits()[index]["title"]
+
+    def get_description(self, index=0):
+        return self.fetch_articles_hits()[index]["description"]
+
+    def get_content_id(self, index=0):
+        return self.fetch_articles_hits()[index]["contentId"]
+
+    def get_image(self, index=0):
+        return self.fetch_articles_hits()[index]["image"]
+
+    def get_image_id(self, index=0):
+        return self.fetch_articles_hits()[index]["imageId"]
+
+    def get_url(self, index=0):
+        return self.fetch_articles_hits()[index]["url"]
+
+    def fetch_articles_hits(self):
+        return self.json["hits"]
+
+
+class Stores:
+
+    def __init__(self, store, search):
+        self.store = store
+        self.store.set_param_types('stores')
+        self.search = search
+        self.json = self.store.fetch_stores(search)
+
+    def get_content_type(self, index=0):
+        return self.fetch_stores_hits()[index]["contentType"]
+
+    def get_title(self, index=0):
+        return self.fetch_stores_hits()[index]["title"]
+
+    def get_description(self, index=0):
+        return self.fetch_stores_hits()[index]["description"]
+
+    def get_content_id(self, index=0):
+        return self.fetch_stores_hits()[index]["contentId"]
+
+    def get_image(self, index=0):
+        return self.fetch_stores_hits()[index]["image"]
+
+    def get_image_id(self, index=0):
+        return self.fetch_stores_hits()[index]["imageId"]
+
+    def get_url(self, index=0):
+        return self.fetch_stores_hits()[index]["url"]
+
+    def fetch_stores_hits(self):
         return self.json["hits"]
