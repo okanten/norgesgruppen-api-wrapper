@@ -14,7 +14,7 @@ import requests
 """
 
 
-class NorgesGruppen:
+class Store:
 
     id_dict_url = {
         1210: "https://spar.no/",
@@ -90,10 +90,10 @@ class NorgesGruppen:
 
 class Product:
 
-    def __init__(self, ng, search):
-        self.ng = ng
+    def __init__(self, store, search):
+        self.store = store
         self.search = search
-        self.json = self.ng.fetch_products(search)
+        self.json = self.store.fetch_products(search)
 
     def get_content_type(self, index=0) -> str:
         return self.fetch_products_hits()[index]["contentType"]
@@ -120,7 +120,7 @@ class Product:
         return self.fetch_products_content(index)["_id"]
 
     def get_unit_weight(self, index=0) -> float:
-        return self.ng.fetch_products_content_source(self.search, index)["unitWeight"]
+        return self.store.fetch_products_content_source(self.search, index)["unitWeight"]
 
     def get_shopping_list_group_name(self, index=0) -> str:
         return self.fetch_product_source(index)["shoppingListGroupName"]
@@ -153,7 +153,7 @@ class Product:
         return len(self.fetch_products_hits())
 
     def fetch_product_list(self):
-        return self.ng.fetch_products(self.search)
+        return self.store.fetch_products(self.search)
 
     def fetch_product_content(self, index=0):
         return self.fetch_products_hits()[index]["contentData"]
@@ -166,5 +166,3 @@ class Product:
 
     def fetch_products_hits(self):
         return self.json["hits"]
-
-
